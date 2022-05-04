@@ -17,7 +17,7 @@ class Agent(ABC):
             The environment to interact with.
         """
         self.maze = maze
-        self.rng = np.random.RandomState(seed=seed)
+        self.rng = np.random.default_rng(seed=seed)
 
     @abstractmethod
     def act(self):

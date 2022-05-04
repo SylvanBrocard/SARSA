@@ -18,7 +18,7 @@ class Maze():
         """
         self.shape = shape
         self.exits = exits
-        self.rng = np.random.RandomState(seed=seed)
+        self.rng = np.random.default_rng(seed=seed)
         self.maze = None
         self.generate_maze()
         self.current_position = self.generate_start_position()
@@ -54,8 +54,8 @@ class Maze():
         """
         Generate an exit.
         """
-        x = self.rng.randint(self.shape[0])
-        y = self.rng.randint(self.shape[1])
+        x = self.rng.integers(self.shape[0])
+        y = self.rng.integers(self.shape[1])
         return x, y
 
     def valid_coordinates(self, x:int, y:int) -> bool:
