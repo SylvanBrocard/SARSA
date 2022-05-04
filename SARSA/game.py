@@ -6,9 +6,9 @@ import numpy as np
 from IPython.display import clear_output
 from tqdm import tqdm
 
-from agent import Agent
-from maze import Maze
-from vizualiser import plot_maze
+from .agent import Agent
+from .maze import Maze
+from .vizualiser import plot_maze
 
 
 class Game:

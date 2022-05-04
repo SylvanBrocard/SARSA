@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 import pandas as pd
 
-from maze import Maze
+from .maze import Maze
 
 start_Q = 0
 start_Q_for_exits = 0
@@ -99,21 +99,12 @@ class SARSAAgent(Agent):
         """
         Initialize the Q matrix.
         """
-        self.Q = pd.DataFrame(
-            index=[
-                (i, j)
-                for i in range(self.maze.maze.shape[0])
-                for j in range(self.maze.maze.shape[1])
-            ],
-            columns=range(4),
-            dtype=np.float,
-        )
-        self.Q.loc[:, :] = start_Q
+        self.Q = np.zeros((self.maze.shape[0], self.maze.shape[1], 4), dtype=np.float)
+        self.Q[:, :, :] = start_Q
 
         # set exits to 0
-        exits = np.transpose(self.maze.get_exits())
-        for x, y in exits:
-            self.Q.loc[[(x, y)], :] = start_Q_for_exits
+        exits = self.maze.get_exits()
+        self.Q[exits] = start_Q_for_exits
 
         # set impossible moves to some value
         # for idx, row in self.Q.iterrows():
@@ -140,11 +131,10 @@ class SARSAAgent(Agent):
         if self.rng.uniform() < self.epsilon:
             action = self.rng.choice(eligible_actions)
         else:
-            action = (
-                self.Q.loc[[self.maze.current_position], eligible_actions]
-                .squeeze()
-                .idxmax()
-            )
+            action_values = self.Q[self.maze.current_position[0], self.maze.current_position[1], :]
+            max_value_actions = np.nonzero(action_values == np.max(action_values[eligible_actions]))[0]
+            max_value_actions = max_value_actions[np.in1d(max_value_actions, eligible_actions)]
+            action = self.rng.choice(max_value_actions)
 
         return action
 
@@ -164,8 +154,11 @@ class SARSAAgent(Agent):
         x_new, y_new = state_prime
         x_old, y_old = state
 
-        QSA = self.Q.loc[[(x_new, y_new)], action_prime].values[0]
-        QSA_old = self.Q.loc[[(x_old, y_old)], action].values[0]
-        self.Q.loc[[(x_old, y_old)], action] += self.alpha * (
-            reward + self.gamma * QSA - QSA_old
-        )
+        QSA_prime = self.Q[x_new, y_new, action_prime]
+        QSA = self.Q[x_old, y_old, action]
+        self.Q[x_old, y_old, action] += self.alpha * (reward + self.gamma * QSA_prime - QSA)
+        # QSA = self.Q.loc[[(x_new, y_new)], action_prime].values[0]
+        # QSA_old = self.Q.loc[[(x_old, y_old)], action].values[0]
+        # self.Q.loc[[(x_old, y_old)], action] += self.alpha * (
+        #     reward + self.gamma * QSA - QSA_old
+        # )
