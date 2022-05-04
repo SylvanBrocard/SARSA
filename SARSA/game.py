@@ -6,7 +6,7 @@ from turtle import clear
 import numpy as np
 from IPython.display import clear_output
 
-from plot_placeholder import plot_placeholder
+from vizualiser import plot
 from agent import RandomAgent
 from maze import Maze
 
@@ -25,5 +25,5 @@ def run_game(seed=None):
 
         # plot the current step
         clear_output(wait=True)
-        plot_placeholder(maze)
+        plot(maze)
         sleep(1)
