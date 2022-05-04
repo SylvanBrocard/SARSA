@@ -13,3 +13,5 @@ dependencies:
   - jupyter
   - nbdime
   - matplotlib
+  - pandas
+  - tqdm

@@ -33,6 +33,22 @@ def plot_maze(maze:Maze):
 
     plt.show()
 
+def plot_cumsum(game):
+    """Plot the cumulative sum of rewards."""
+    plt.figure(1, figsize=(12,10))
+    plt.plot(game.get_cumsum())
+    plt.title("Cumulative sum of rewards")
+    plt.grid()
+    plt.show()
+
+def plot_cumav(game):
+    """Plot the cumulative average of rewards."""
+    plt.figure(1, figsize=(12,10))
+    plt.plot(game.get_cumav())
+    plt.title("Cumulative average of rewards")
+    plt.grid()
+    plt.show()
+
 if __name__ == "__main__":
     matrice_jeu = [[1,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,1]]
     matrice_jeu = np.array(matrice_jeu)

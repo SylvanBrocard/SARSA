@@ -83,9 +83,11 @@ class Maze():
             x -= 1
         elif action == 3:
             x += 1
+        if not self.valid_coordinates(x, y):
+            raise ValueError(f"Invalid coordinates: {x, y}, action: {action}")
         return x, y
 
-    def step(self, action:int) -> Tuple[int, int, int, bool]:
+    def step(self, action:int) -> Tuple[float, bool]:
         """
         Step in the maze.
         """
