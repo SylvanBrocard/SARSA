@@ -17,6 +17,7 @@ class Maze():
         self.exits = exits
         self.maze = self.generate_maze()
         self.rng = np.random.RandomState(seed=seed)
+        self.current_position = self.generate_random_coord()
 
     def generate_maze(self) -> np.ndarray:
         """
@@ -24,11 +25,11 @@ class Maze():
         """
         maze = np.zeros(self.shape, dtype=np.int)
         for _ in range(self.exits):
-            x, y = self.generate_exit()
+            x, y = self.generate_random_coord()
             maze[x, y] = 1
         return maze
 
-    def generate_exit(self) -> Tuple[int, int]:
+    def generate_random_coord(self) -> Tuple[int, int]:
         """
         Generate an exit.
         """
@@ -48,3 +49,28 @@ class Maze():
         """
         moves = [(x, y-1), (x, y+1), (x-1, y), (x+1, y)]
         return [self.valid_coordinates(x, y) for x, y in moves]
+
+    def move(self, x:int, y:int, action:int) -> Tuple[int, int]:
+        """
+        Move in the maze.
+        """
+        if action == 0:
+            y -= 1
+        elif action == 1:
+            y += 1
+        elif action == 2:
+            x -= 1
+        elif action == 3:
+            x += 1
+        return x, y
+
+    def step(self, action:int) -> Tuple[int, int, int, bool]:
+        """
+        Step in the maze.
+        """
+        x, y = self.current_position
+        x, y = self.move(x, y, action)
+        reward = self.maze[x, y]
+        self.current_position = x, y
+        done = reward == 1
+        return x, y, reward, done
