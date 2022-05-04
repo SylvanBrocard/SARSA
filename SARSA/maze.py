@@ -9,6 +9,9 @@ class Maze():
     Maze class.
     """
 
+    # list of possible actions, corresponding to left, right, up, down
+    actions=[0, 1, 2, 3]
+
     def __init__(self, shape:Tuple[int,int], exits:int, seed:int=None):
         """
         Constructor.
@@ -57,7 +60,7 @@ class Maze():
         Return eligible moves.
         """
         moves = [(x, y-1), (x, y+1), (x-1, y), (x+1, y)]
-        return [self.valid_coordinates(x, y) for x, y in moves]
+        return [i for i, (x, y) in enumerate(moves) if self.valid_coordinates(x, y)]
 
     def move(self, x:int, y:int, action:int) -> Tuple[int, int]:
         """
