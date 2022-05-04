@@ -82,7 +82,7 @@ class Maze():
         """
         x, y = self.current_position
         x, y = self.move(x, y, action)
-        reward = self.maze[x, y]
         self.current_position = x, y
-        done = reward == 1
-        return x, y, reward, done
+        reward = self.maze[x, y]
+        done = self.maze[x, y] == 1
+        return reward, done

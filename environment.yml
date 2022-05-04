@@ -10,3 +10,5 @@ dependencies:
   - python
   - numpy
   - black
+  - jupyter
+  - nbdime
