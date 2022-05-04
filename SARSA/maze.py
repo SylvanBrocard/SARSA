@@ -25,9 +25,18 @@ class Maze():
         """
         maze = np.zeros(self.shape, dtype=np.int)
         for _ in range(self.exits):
-            x, y = self.generate_random_coord()
+            x, y = self.generate_exit()
             maze[x, y] = 1
         return maze
+
+    def generate_exit(self) -> Tuple[int, int]:
+        """
+        Generate an exit.
+        """
+        x, y = self.generate_random_coord()
+        while self.maze[x, y] == 1:
+            x, y = self.generate_random_coord()
+        return x, y
 
     def generate_random_coord(self) -> Tuple[int, int]:
         """
