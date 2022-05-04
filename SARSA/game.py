@@ -54,21 +54,34 @@ class Game:
         if plot:
             plot_maze(self.maze)
             sleep(1)
+
+        # choisir une action a depuis s en utilisant la politique spécifiée par Q (par exemple ε-greedy)
+        action = self.agent.act()
+        # initialiser l'état s
+        state = self.maze.current_position
+
+        # répéter jusqu'à ce que s soit l'état terminal 
         maze_done = False
         agent_done = False
-        action = self.agent.act()
-        state = self.maze.current_position
         while not (maze_done or agent_done):
+            # exécuter l'action a
             maze_done = self.maze.step(action)
+
+            # observer la récompense r et l'état s'
             if not maze_done:
                 reward -= 1
             steps += 1
-            agent_done = self.max_steps - steps <= 0
-            action_prime = self.agent.act()
             state_prime = self.maze.current_position
+            agent_done = self.max_steps - steps <= 0
 
+            # choisir une action a' depuis s' en utilisant la politique spécifiée par Q (par exemple ε-greedy)
+            action_prime = self.agent.act()
+
+            # Q[s, a] := Q[s, a] + α[r + γQ(s', a') - Q(s, a)]
             self.agent.learn(reward, state, action, state_prime, action_prime)
 
+            # s ← s'
+            # a ← a'
             state = state_prime
             action = action_prime
 
@@ -87,15 +100,3 @@ class Game:
         for _ in tqdm(range(episodes), desc="episodes"):
             reward = self.run_game(plot=False)
             self.rewards.append(reward)
-
-    def get_cumsum(self) -> np.ndarray:
-        """
-        Get the cumulative sum of rewards.
-        """
-        return np.cumsum(self.rewards)
-
-    def get_cumav(self) -> np.ndarray:
-        """
-        Get the cumulative average of rewards.
-        """
-        return np.cumsum(self.rewards) / np.arange(1, len(self.rewards) + 1)

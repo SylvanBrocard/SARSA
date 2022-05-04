@@ -5,7 +5,6 @@ Agent class for the SARSA algorithm.
 from abc import ABC, abstractmethod
 
 import numpy as np
-import pandas as pd
 
 from .maze import Maze
 
@@ -99,20 +98,11 @@ class SARSAAgent(Agent):
         """
         Initialize the Q matrix.
         """
-        self.Q = np.zeros((self.maze.shape[0], self.maze.shape[1], 4), dtype=np.float)
-        self.Q[:, :, :] = start_Q
+        self.Q = np.ones((self.maze.shape[0], self.maze.shape[1], 4), dtype=np.float) * start_Q
 
-        # set exits to 0
+        # set exits to some value
         exits = self.maze.get_exits()
         self.Q[exits] = start_Q_for_exits
-
-        # set impossible moves to some value
-        # for idx, row in self.Q.iterrows():
-        #     x, y = idx
-        #     eligible_actions = self.maze.eligible_actions(x, y)
-        #     for action in range(4):
-        #         if action not in eligible_actions:
-        #             row[action] = 0
 
     def act(self) -> int:
         """
@@ -154,11 +144,8 @@ class SARSAAgent(Agent):
         x_new, y_new = state_prime
         x_old, y_old = state
 
+        # update knowledge
         QSA_prime = self.Q[x_new, y_new, action_prime]
         QSA = self.Q[x_old, y_old, action]
         self.Q[x_old, y_old, action] += self.alpha * (reward + self.gamma * QSA_prime - QSA)
-        # QSA = self.Q.loc[[(x_new, y_new)], action_prime].values[0]
-        # QSA_old = self.Q.loc[[(x_old, y_old)], action].values[0]
-        # self.Q.loc[[(x_old, y_old)], action] += self.alpha * (
-        #     reward + self.gamma * QSA - QSA_old
-        # )
+
