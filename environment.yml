@@ -12,3 +12,4 @@ dependencies:
   - black
   - jupyter
   - nbdime
+  - matplotlib
