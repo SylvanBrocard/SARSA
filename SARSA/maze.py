@@ -21,7 +21,7 @@ class Maze():
         self.rng = np.random.RandomState(seed=seed)
         self.maze = None
         self.generate_maze()
-        self.current_position = self.generate_random_coord()
+        self.current_position = self.generate_start_position()
 
     def generate_maze(self) -> np.ndarray:
         """
@@ -35,6 +35,15 @@ class Maze():
     def generate_exit(self) -> Tuple[int, int]:
         """
         Generate an exit.
+        """
+        x, y = self.generate_random_coord()
+        while self.maze[x, y] == 1:
+            x, y = self.generate_random_coord()
+        return x, y
+
+    def generate_start_position(self) -> Tuple[int, int]:
+        """
+        Generate a start position.
         """
         x, y = self.generate_random_coord()
         while self.maze[x, y] == 1:
