@@ -3,6 +3,8 @@ Agent class for the SARSA algorithm.
 """
 
 from abc import ABC, abstractmethod
+from collections import namedtuple
+from typing import Tuple
 
 import numpy as np
 
@@ -42,16 +44,22 @@ class Agent(ABC):
         pass
 
     @abstractmethod
-    def learn(self, reward, state, action, state_prime, action_prime):
+    def learn(self, reward:int, state:Tuple, action:int, state_prime:Tuple, action_prime:int):
         """
         Update the agent's knowledge of the environment.
 
         Parameters
         ----------
-        action : int
-            The action taken.
         reward : float
             The reward received.
+        state : namedtuple
+            The current state.
+        action : int
+            The action taken.
+        state_prime : namedtuple
+            The next state.
+        action_prime : int
+            The next action.
         """
         pass
 
@@ -63,7 +71,7 @@ class RandomAgent(Agent):
         eligible_actions = self.maze.eligible_actions(*self.maze.current_position)
         return self.rng.choice(eligible_actions)
 
-    def learn(self, reward, state, action, state_prime, action_prime):
+    def learn(self, reward:int, state:Tuple, action:int, state_prime:Tuple, action_prime:int):
         pass
 
 
@@ -130,25 +138,27 @@ class SARSAAgent(Agent):
 
         return action
 
-    def learn(self, reward, state, action, state_prime, action_prime):
+    def learn(self, reward:int, state:Tuple, action:int, state_prime:Tuple, action_prime:int):
         """
         Update the agent's knowledge of the environment.
 
         Parameters
         ----------
-        action : int
-            The action taken.
         reward : float
             The reward received.
+        state : namedtuple
+            The current state.
+        action : int
+            The action taken.
+        state_prime : namedtuple
+            The next state.
+        action_prime : int
+            The next action.
         """
 
         # get current and previous positions
-        if isinstance(self.maze, MazeWithGhosts):
-            x_new, y_new = state_prime[0]
-            x_old, y_old = state[0]
-        else:
-            x_new, y_new = state_prime
-            x_old, y_old = state
+        x_new, y_new = state_prime[0]
+        x_old, y_old = state[0]
 
         # update knowledge
         QSA_prime = self.Q[x_new, y_new, action_prime]

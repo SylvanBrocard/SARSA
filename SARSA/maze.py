@@ -176,7 +176,7 @@ class Maze:
         x, y = self.move(x, y, action)
         self.current_position = x, y
         done = self.maze[x, y] == 1
-        return done
+        return done, False
 
     def get_exits(self) -> list:
         """
@@ -188,6 +188,22 @@ class Maze:
             List of exits.
         """
         return np.where(self.maze == 1)
+
+    def get_state(self) -> Tuple:
+        """
+        Get current world state.
+
+        Returns
+        -------
+        player : Tuple[int,int]
+            Player position.
+        """
+
+        # get current position
+        x, y = self.current_position
+        player = (x, y)
+
+        return player, []
 
 
 class MazeWithGhosts(Maze):
