@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from .maze import Maze
+from .maze import Maze, MazeWithGhosts
 
 
 def plot():
@@ -49,8 +49,20 @@ def plot_maze(maze: Maze):
         edgecolors="blue",
     )
 
-    plt.show()
+    # add ghosts
+    if isinstance(maze, MazeWithGhosts):
+        ghosts_x = [ghost[0]+0.5 for ghost in maze.ghosts]
+        ghosts_y = [ghost[1]+0.5 for ghost in maze.ghosts]
+        plt.scatter(
+            x=ghosts_x,
+            y=ghosts_y,
+            s=130,
+            c="grey",
+            marker="X",
+            edgecolors="black",
+        )
 
+    plt.show()
 
 def plot_cumsum(game):
     """Plot the cumulative sum of rewards."""

@@ -187,3 +187,128 @@ class Maze:
             List of exits.
         """
         return np.where(self.maze == 1)
+
+
+class MazeWithGhosts(Maze):
+    """
+    Maze with ghosts.
+    """
+
+    def __init__(
+        self, shape: Tuple[int, int], exits: int, nb_ghosts: int, seed: int = None
+    ):
+        """
+        Constructor.
+
+        Parameters
+        ----------
+        shape : Tuple[int,int]
+            Shape of the maze.
+        exits : int
+            Number of exits.
+        ghosts : int
+            Number of ghosts.
+        seed : int
+            Seed for the random number generator.
+        """
+        super().__init__(shape, exits, seed)
+        self.nb_ghosts = nb_ghosts
+        self.ghosts = None
+        self.generate_ghosts()
+
+    def generate_ghosts(self):
+        """
+        Generate ghosts.
+        """
+        self.ghosts = []
+        for _ in range(self.nb_ghosts):
+            x, y = self.generate_ghost()
+            self.ghosts.append([x, y])
+
+    def generate_ghost(self) -> Tuple[int, int]:
+        """
+        Generate a ghost.
+
+        Returns
+        -------
+        x : int
+            X coordinate.
+        y : int
+            Y coordinate.
+        """
+        x, y = self.generate_random_coord()
+        while [x, y] in self.ghosts or self.current_position == [x, y]:
+            x, y = self.generate_random_coord()
+        return x, y
+
+    def eligible_actions(self, x: int, y: int) -> list:
+        """
+        Return eligible moves.
+
+        Parameters
+        ----------
+        x : int
+            X coordinate.
+        y : int
+            Y coordinate.
+
+        Returns
+        -------
+        eligible_actions : list
+            List of eligible moves.
+        """
+        moves = [(x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y)]
+        return [
+            i
+            for i, (x, y) in enumerate(moves)
+            if self.valid_coordinates(x, y) and [x, y] not in self.ghosts
+        ]
+
+    def move_ghost(self, x: int, y: int):
+        """
+        Move ghost.
+
+        Returns
+        -------
+        x : int
+            X coordinate.
+        y : int
+            Y coordinate.
+        """
+        eligible_actions = self.eligible_actions(x, y)
+        if len(eligible_actions) > 0:
+            action = self.rng.choice(eligible_actions)
+            x, y = self.move(x, y, action)
+        return x, y
+
+    def step(self, action: int) -> bool:
+        """
+        Step in the maze.
+
+        Parameters
+        ----------
+        action : int
+            Action to take.
+
+        Returns
+        -------
+        done : bool
+            Whether the game is done.
+        dead : bool
+            Whether the player is dead.
+        """
+        # move player
+        x, y = self.current_position
+        x, y = self.move(x, y, action)
+        self.current_position = x, y
+
+        # move ghosts
+        for ghost in self.ghosts:
+            x, y = ghost
+            x, y = self.move_ghost(x, y)
+            ghost[0], ghost[1] = x, y
+
+        x, y = self.current_position
+        dead = [x, y] in self.ghosts
+        done = (self.maze[x, y] == 1 or dead)
+        return done, dead
