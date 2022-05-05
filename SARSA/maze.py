@@ -171,6 +171,8 @@ class Maze:
         -------
         done : bool
             Whether the game is done.
+        dead : bool
+            Whether the player is dead. Always False.
         """
         x, y = self.current_position
         x, y = self.move(x, y, action)
@@ -197,6 +199,8 @@ class Maze:
         -------
         player : Tuple[int,int]
             Player position.
+        ghosts : list
+            List of ghost positions. Always empty.
         """
 
         # get current position
