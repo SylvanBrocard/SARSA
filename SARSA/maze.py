@@ -2,6 +2,7 @@
 Module to generate a maze.
 """
 from typing import Tuple
+from copy import deepcopy
 
 import numpy as np
 
@@ -312,3 +313,24 @@ class MazeWithGhosts(Maze):
         dead = [x, y] in self.ghosts
         done = (self.maze[x, y] == 1 or dead)
         return done, dead
+
+    def get_state(self) -> Tuple:
+        """
+        Get current world state.
+
+        Returns
+        -------
+        player : Tuple[int,int]
+            Player position.
+        ghosts : list[list[int,int]]
+            List of ghost positions.
+        """
+
+        # get current position
+        x, y = self.current_position
+        player = (x, y)
+
+        # get ghosts
+        ghosts = deepcopy(self.ghosts)
+
+        return player, ghosts

@@ -131,7 +131,7 @@ class GameWithGhosts(Game):
         # choisir une action a depuis s en utilisant la politique spécifiée par Q (par exemple ε-greedy)
         action = self.agent.act()
         # initialiser l'état s
-        state = self.maze.current_position
+        state = self.maze.get_state()
 
         # répéter jusqu'à ce que s soit l'état terminal 
         maze_done = False
@@ -147,7 +147,7 @@ class GameWithGhosts(Game):
             if agent_dead:
                 reward -= 10
             steps += 1
-            state_prime = self.maze.current_position
+            state_prime = self.maze.get_state()
             agent_done = self.max_steps - steps <= 0
 
             # choisir une action a' depuis s' en utilisant la politique spécifiée par Q (par exemple ε-greedy)

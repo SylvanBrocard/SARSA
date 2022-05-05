@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
-from .maze import Maze
+from .maze import Maze, MazeWithGhosts
 
 start_Q = 0
 start_Q_for_exits = 0
@@ -143,8 +143,12 @@ class SARSAAgent(Agent):
         """
 
         # get current and previous positions
-        x_new, y_new = state_prime
-        x_old, y_old = state
+        if isinstance(self.maze, MazeWithGhosts):
+            x_new, y_new = state_prime[0]
+            x_old, y_old = state[0]
+        else:
+            x_new, y_new = state_prime
+            x_old, y_old = state
 
         # update knowledge
         QSA_prime = self.Q[x_new, y_new, action_prime]
