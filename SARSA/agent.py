@@ -116,6 +116,8 @@ class SARSAAgent(Agent):
 
         # check eligible moves.
         eligible_actions = self.maze.eligible_actions(*self.maze.current_position)
+        if len(eligible_actions) == 0:
+            return -1
 
         # decide whether to take a random action or not
         if self.rng.uniform() < self.epsilon:
