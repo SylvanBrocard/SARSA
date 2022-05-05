@@ -348,9 +348,12 @@ class MazeWithGhosts(Maze):
 
         # get current position
         x, y = self.current_position
-        player = (x, y)
+        player = [x, y]
 
         # get ghosts
         ghosts = deepcopy(self.ghosts)
 
-        return player, ghosts
+        state = player
+        for ghost in ghosts:
+            state.extend(ghost)
+        return state

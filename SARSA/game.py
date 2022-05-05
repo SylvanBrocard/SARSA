@@ -1,6 +1,7 @@
 """Module to run a maze game."""
 
 from time import sleep
+from copy import deepcopy
 
 import numpy as np
 from IPython.display import clear_output
@@ -33,6 +34,7 @@ class Game:
         self.agent = agent
         self.max_steps = max_steps
         self.rewards = []
+        self.state_history = []
 
     def run_game(self, plot: bool = False) -> None:
         """
@@ -58,9 +60,9 @@ class Game:
             sleep(1)
 
         # choisir une action a depuis s en utilisant la politique spécifiée par Q (par exemple ε-greedy)
-        action = self.agent.act()
         # initialiser l'état s
         state = self.maze.get_state()
+        action = self.agent.act(state)
 
         # répéter jusqu'à ce que s soit l'état terminal
         maze_exited = False
@@ -80,13 +82,16 @@ class Game:
             out_of_steps = self.max_steps - steps <= 0
 
             # choisir une action a' depuis s' en utilisant la politique spécifiée par Q (par exemple ε-greedy)
-            action_prime = self.agent.act()
+            action_prime = self.agent.act(state_prime)
 
             # if no possible move, agent is dead
             if action_prime == -1:
                 agent_dead = True
                 reward -= 10
                 break
+
+            done = maze_exited or out_of_steps or agent_dead
+            self.state_history.append((reward, deepcopy(state), action, deepcopy(state_prime), action_prime, done))
 
             # Q[s, a] := Q[s, a] + α[r + γQ(s', a') - Q(s, a)]
             self.agent.learn(reward, state, action, state_prime, action_prime)
@@ -101,6 +106,8 @@ class Game:
                 clear_output(wait=True)
                 plot_maze(self.maze)
                 sleep(1)
+
+        self.agent.train(self.state_history)
 
         return reward
 
